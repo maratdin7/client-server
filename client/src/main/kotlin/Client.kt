@@ -12,8 +12,9 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isReadable
 import MessageBody as MB
-
 
 class Client(private val name: String, host: String, port: Int) {
     private val socket: Socket
@@ -84,9 +85,11 @@ class Client(private val name: String, host: String, port: Int) {
             }
 
             val filePath = message.substringAfter("file:", "")
-            val messageData = if (filePath.isNotEmpty())
-                MB.MessageData.messageWithFile(name, filePath)
-            else
+            val messageData = if (filePath.isNotEmpty()) {
+                val path = Paths.get(filePath).takeIf { it.isDirectory().not() && it.isReadable() }
+                if (path != null) MB.MessageData.messageWithFile(name, path)
+                else continue
+            } else
                 MB.MessageData.messageWithText(name, message)
 
             Message(Type.MESSAGE, messageData).sendMessage(socketOutputStream)
@@ -100,12 +103,22 @@ class Client(private val name: String, host: String, port: Int) {
         Message(type, messageBody).sendMessage(this)
     }
 
+    private fun errorWrap(call: () -> Unit) {
+        try {
+            call()
+        } catch (e: Exception) {
+            println("Соединение разорвано")
+            isLogin = false
+            socket.close()
+        }
+    }
+
     init {
         socket = Socket(host, port)
         runBlocking {
             withContext(Dispatchers.IO) {
-                launch { outputStream() }
-                launch { inputStream() }
+                launch { errorWrap(::outputStream) }
+                launch { errorWrap(::inputStream) }
             }
         }
         socket.close()

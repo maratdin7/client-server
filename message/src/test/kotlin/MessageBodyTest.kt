@@ -3,11 +3,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.net.ServerSocket
 import java.net.Socket
+import java.nio.file.Paths
 
 internal class MessageBodyTest {
     @Test
     fun testGson() {
-        val msg = MessageBody.MessageData.messageWithFile("hello", "/home/maratdin7/colors.sh")
+        val msg = MessageBody.MessageData.messageWithFile("hello", Paths.get("/home/maratdin7/colors.sh"))
         val jsonString = Gson().toJson(msg)
         val msgNew = Gson().fromJson(jsonString, MessageBody.MessageData::class.java)
         assertEquals(msg.sha256, msgNew.sha256)

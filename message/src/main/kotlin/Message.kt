@@ -4,7 +4,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -85,8 +85,8 @@ sealed class MessageBody {
     ) : MessageBody() {
 
         companion object {
-            fun messageWithFile(name: String, uri: String): MessageData {
-                val byteArray = Files.readAllBytes(Paths.get(uri))
+            fun messageWithFile(name: String, path: Path): MessageData {
+                val byteArray = Files.readAllBytes(path)
                 val data = Base64.getEncoder().encodeToString(byteArray)
 
                 return MessageData(name, true, data)
