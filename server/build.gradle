@@ -22,7 +22,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(
-                'Main-Class': 'ServerKt'
+                'Main-Class': 'MainKt'
         )
     }
     from {
