@@ -1,0 +1,23 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.6.0-RC2'
+}
+
+group 'org.example'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0-RC2'
+    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+
+}
